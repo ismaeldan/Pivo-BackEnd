@@ -29,13 +29,13 @@ let ColumnsController = class ColumnsController {
         return this.columnsService.findAll();
     }
     findOne(id) {
-        return this.columnsService.findOne(+id);
+        return this.columnsService.findOne(id);
     }
     update(id, updateColumnDto) {
-        return this.columnsService.update(+id, updateColumnDto);
+        return this.columnsService.update(id, updateColumnDto);
     }
     remove(id) {
-        return this.columnsService.remove(+id);
+        return this.columnsService.remove(id);
     }
 };
 exports.ColumnsController = ColumnsController;

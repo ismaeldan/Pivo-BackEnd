@@ -32,14 +32,11 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DrizzleProvider = exports.DRIZZLE_PROVIDER_TOKEN = void 0;
 const config_1 = require("@nestjs/config");
-const postgres_js_1 = require("drizzle-orm/postgres-js");
-const postgres_1 = __importDefault(require("postgres"));
+const node_postgres_1 = require("drizzle-orm/node-postgres");
+const pg_1 = require("pg");
 const schema = __importStar(require("./schema"));
 exports.DRIZZLE_PROVIDER_TOKEN = 'DRIZZLE_PROVIDER';
 exports.DrizzleProvider = {
@@ -50,8 +47,10 @@ exports.DrizzleProvider = {
         if (!connectionString) {
             throw new Error('DATABASE_URL is not set in environment variables');
         }
-        const client = (0, postgres_1.default)(connectionString);
-        return (0, postgres_js_1.drizzle)(client, { schema });
+        const pool = new pg_1.Pool({
+            connectionString,
+        });
+        return (0, node_postgres_1.drizzle)(pool, { schema });
     },
 };
 //# sourceMappingURL=drizzle.provider.js.map

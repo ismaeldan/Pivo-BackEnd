@@ -26,7 +26,10 @@ let TasksService = class TasksService {
         const [newTask] = await this.db
             .insert(schema_1.tasks)
             .values({
-            ...createTaskDto,
+            title: createTaskDto.title,
+            description: createTaskDto.description,
+            authorId: createTaskDto.authorId,
+            columnId: createTaskDto.columnId,
         })
             .returning();
         return newTask;

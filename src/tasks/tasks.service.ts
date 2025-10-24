@@ -1,7 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { DB, DbType } from 'src/db/db.module';
+import { DB } from 'src/db/db.module';
+import type { DbType } from 'src/db/db.module';
 import { tasks } from 'src/db/schema';
 import { desc, eq } from 'drizzle-orm';
 
@@ -14,7 +15,10 @@ export class TasksService {
     const [newTask] = await this.db
       .insert(tasks)
       .values({
-        ...createTaskDto,
+        title: createTaskDto.title,
+        description: createTaskDto.description,
+        authorId: createTaskDto.authorId,
+        columnId: createTaskDto.columnId,
       })
       .returning();
     return newTask;

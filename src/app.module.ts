@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { envSchema } from './config/env.validation';
-import { DbModule } from './db/db.module';
+import { DatabaseModule } from './db/db.module';
 import { UsersModule } from './users/users.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ColumnsModule } from './columns/columns.module';
@@ -17,7 +17,7 @@ import { ColumnsModule } from './columns/columns.module';
         abortEarly: true,
       },
     }),
-    DbModule,
+    DatabaseModule,
     UsersModule,
     TasksModule,
     ColumnsModule,

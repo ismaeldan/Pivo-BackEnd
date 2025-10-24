@@ -28,7 +28,7 @@ exports.AppModule = AppModule = __decorate([
                     abortEarly: true,
                 },
             }),
-            db_module_1.DbModule,
+            db_module_1.DatabaseModule,
             users_module_1.UsersModule,
             tasks_module_1.TasksModule,
             columns_module_1.ColumnsModule,

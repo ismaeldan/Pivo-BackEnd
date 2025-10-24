@@ -19,16 +19,16 @@ export class ColumnsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.columnsService.findOne(+id);
+    return this.columnsService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateColumnDto: UpdateColumnDto) {
-    return this.columnsService.update(+id, updateColumnDto);
+    return this.columnsService.update(id, updateColumnDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.columnsService.remove(+id);
+    return this.columnsService.remove(id);
   }
 }

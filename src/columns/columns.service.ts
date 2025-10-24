@@ -1,7 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
-import { DB, DbType } from 'src/db/db.module';
+import { DB } from 'src/db/db.module';
+import type { DbType } from 'src/db/db.module';
 import { columns } from 'src/db/schema';
 import { asc, eq } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';

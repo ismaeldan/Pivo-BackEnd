@@ -1,6 +1,6 @@
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { DbType } from 'src/db/db.module';
+import type { DbType } from 'src/db/db.module';
 export declare class TasksService {
     private db;
     constructor(db: DbType);
