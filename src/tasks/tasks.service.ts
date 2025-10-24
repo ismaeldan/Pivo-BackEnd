@@ -1,26 +1,64 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { DB, DbType } from 'src/db/db.module';
+import { tasks } from 'src/db/schema';
+import { desc, eq } from 'drizzle-orm';
 
 @Injectable()
 export class TasksService {
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
+  constructor(@Inject(DB) private db: DbType) {}
+
+  async create(createTaskDto: CreateTaskDto) {
+
+    const [newTask] = await this.db
+      .insert(tasks)
+      .values({
+        ...createTaskDto,
+      })
+      .returning();
+    return newTask;
   }
 
-  findAll() {
-    return `This action returns all tasks`;
+  async findAll() {
+    const allTasks = await this.db
+      .select()
+      .from(tasks)
+      .orderBy(desc(tasks.createdAt));
+      
+    return allTasks;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
+  async findOne(id: string) {
+    const [task] = await this.db.select().from(tasks).where(eq(tasks.id, id));
+
+    if (!task) {
+      throw new NotFoundException(`Task com ID ${id} não encontrada.`);
+    }
+
+    return task;
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  async update(id: string, updateTaskDto: UpdateTaskDto) {
+    await this.findOne(id);
+
+    const [updatedTask] = await this.db
+      .update(tasks)
+      .set(updateTaskDto)
+      .where(eq(tasks.id, id))
+      .returning();
+
+    return updatedTask;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  async remove(id: string) {
+    await this.findOne(id);
+
+    const [deletedTask] = await this.db
+      .delete(tasks)
+      .where(eq(tasks.id, id))
+      .returning();
+
+    return deletedTask;
   }
 }

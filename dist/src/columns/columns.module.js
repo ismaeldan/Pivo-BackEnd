@@ -10,13 +10,11 @@ exports.ColumnsModule = void 0;
 const common_1 = require("@nestjs/common");
 const columns_service_1 = require("./columns.service");
 const columns_controller_1 = require("./columns.controller");
-const db_module_1 = require("../db/db.module");
 let ColumnsModule = class ColumnsModule {
 };
 exports.ColumnsModule = ColumnsModule;
 exports.ColumnsModule = ColumnsModule = __decorate([
     (0, common_1.Module)({
-        imports: [db_module_1.DatabaseModule],
         controllers: [columns_controller_1.ColumnsController],
         providers: [columns_service_1.ColumnsService],
     })
