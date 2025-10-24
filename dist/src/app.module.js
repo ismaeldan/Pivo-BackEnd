@@ -13,6 +13,8 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const db_module_1 = require("./db/db.module");
 const users_module_1 = require("./users/users.module");
+const tasks_module_1 = require("./tasks/tasks.module");
+const columns_module_1 = require("./columns/columns.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -28,6 +30,8 @@ exports.AppModule = AppModule = __decorate([
             }),
             db_module_1.DbModule,
             users_module_1.UsersModule,
+            tasks_module_1.TasksModule,
+            columns_module_1.ColumnsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

@@ -4,6 +4,7 @@ const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 const config_1 = require("@nestjs/config");
 const env_validation_1 = require("./config/env.validation");
+const common_1 = require("@nestjs/common");
 async function bootstrap() {
     try {
         env_validation_1.envSchema.parse(process.env);
@@ -14,6 +15,7 @@ async function bootstrap() {
         process.exit(1);
     }
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.useGlobalPipes(new common_1.ValidationPipe());
     const configService = app.get(config_1.ConfigService);
     const port = configService.get('PORT') || 3001;
     app.enableCors();

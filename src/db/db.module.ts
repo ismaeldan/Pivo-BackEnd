@@ -1,4 +1,3 @@
-// src/db/db.module.ts
 import { Module } from '@nestjs/common';
 import { DrizzleProvider } from './drizzle.provider';
 

@@ -5,6 +5,8 @@ import { AppService } from './app.service';
 import { envSchema } from './config/env.validation';
 import { DbModule } from './db/db.module';
 import { UsersModule } from './users/users.module';
+import { TasksModule } from './tasks/tasks.module';
+import { ColumnsModule } from './columns/columns.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { UsersModule } from './users/users.module';
     }),
     DbModule,
     UsersModule,
+    TasksModule,
+    ColumnsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

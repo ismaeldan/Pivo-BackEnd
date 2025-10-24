@@ -1,0 +1,25 @@
+version: '3.8' # Especifica a versão do Docker Compose
+
+services:
+  # Define o nosso serviço de banco de dados
+  db:
+    image: postgres:16 # Usar a imagem oficial do PostgreSQL 16
+    container_name: pivo-backend-db
+    ports:
+      - '5432:5432' # Mapeia a porta 5432 do seu PC para a porta 5432 do container
+    environment:
+      # Estas variáveis de ambiente têm de ser IGUAIS às do seu ficheiro .env
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data # Persiste os dados numa pasta local
+
+# Define a rede que o container usará (para evitar conflitos)
+networks:
+  default:
+    name: pivobackend_default
+
+# Define o volume para persistir os dados (para não perder tudo ao reiniciar)
+volumes:
+  data:
