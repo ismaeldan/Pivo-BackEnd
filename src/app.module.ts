@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+      validationSchema: envSchema,
       validationOptions: {
         abortEarly: true,
       },
@@ -24,7 +25,7 @@ import { AuthModule } from './auth/auth.module';
     ColumnsModule,
     AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
