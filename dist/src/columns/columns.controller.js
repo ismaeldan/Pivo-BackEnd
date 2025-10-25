@@ -23,7 +23,12 @@ let ColumnsController = class ColumnsController {
         this.columnsService = columnsService;
     }
     create(createColumnDto) {
-        return this.columnsService.create(createColumnDto);
+        const mockUserId = 'COLE_UM_USER_ID_VALIDO_DO_SEU_DB_AQUI';
+        const columnDataComAutor = {
+            ...createColumnDto,
+            authorId: mockUserId,
+        };
+        return this.columnsService.create(columnDataComAutor);
     }
     findAll() {
         return this.columnsService.findAll();
@@ -41,6 +46,7 @@ let ColumnsController = class ColumnsController {
 exports.ColumnsController = ColumnsController;
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_column_dto_1.CreateColumnDto]),
@@ -69,6 +75,7 @@ __decorate([
 ], ColumnsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

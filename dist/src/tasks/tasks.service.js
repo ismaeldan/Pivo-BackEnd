@@ -22,48 +22,53 @@ let TasksService = class TasksService {
     constructor(db) {
         this.db = db;
     }
-    async create(createTaskDto) {
+    async create(data) {
         const [newTask] = await this.db
             .insert(schema_1.tasks)
             .values({
-            title: createTaskDto.title,
-            description: createTaskDto.description,
-            authorId: createTaskDto.authorId,
-            columnId: createTaskDto.columnId,
+            title: data.title,
+            description: data.description,
+            authorId: data.authorId,
+            columnId: data.columnId,
         })
             .returning();
         return newTask;
     }
     async findAll() {
-        const allTasks = await this.db
-            .select()
-            .from(schema_1.tasks)
-            .orderBy((0, drizzle_orm_1.desc)(schema_1.tasks.createdAt));
+        const allTasks = await this.db.query.tasks.findMany({
+            orderBy: [(0, drizzle_orm_1.desc)(schema_1.tasks.createdAt)],
+        });
         return allTasks;
     }
     async findOne(id) {
-        const [task] = await this.db.select().from(schema_1.tasks).where((0, drizzle_orm_1.eq)(schema_1.tasks.id, id));
+        const [task] = await this.db.query.tasks.findMany({
+            where: (0, drizzle_orm_1.eq)(schema_1.tasks.id, id),
+        });
         if (!task) {
             throw new common_1.NotFoundException(`Task com ID ${id} não encontrada.`);
         }
         return task;
     }
     async update(id, updateTaskDto) {
-        await this.findOne(id);
         const [updatedTask] = await this.db
             .update(schema_1.tasks)
             .set(updateTaskDto)
             .where((0, drizzle_orm_1.eq)(schema_1.tasks.id, id))
             .returning();
+        if (!updatedTask) {
+            throw new common_1.NotFoundException(`Task com ID ${id} não encontrada.`);
+        }
         return updatedTask;
     }
     async remove(id) {
-        await this.findOne(id);
         const [deletedTask] = await this.db
             .delete(schema_1.tasks)
             .where((0, drizzle_orm_1.eq)(schema_1.tasks.id, id))
             .returning();
-        return deletedTask;
+        if (!deletedTask) {
+            throw new common_1.NotFoundException(`Task com ID ${id} não encontrada.`);
+        }
+        return;
     }
 };
 exports.TasksService = TasksService;

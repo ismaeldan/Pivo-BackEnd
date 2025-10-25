@@ -1,9 +1,35 @@
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import type { DbType } from 'src/db/db.module';
 export declare class UsersService {
-    create(createUserDto: CreateUserDto): string;
-    findAll(): string;
-    findOne(id: number): string;
-    update(id: number, updateUserDto: UpdateUserDto): string;
-    remove(id: number): string;
+    private db;
+    constructor(db: DbType);
+    create(createUserDto: CreateUserDto): Promise<{
+        id: string;
+        name: string | null;
+        email: string;
+        avatarUrl: string | null;
+        createdAt: Date | null;
+    }>;
+    findAll(): Promise<{
+        id: string;
+        name: string | null;
+        email: string;
+        avatarUrl: string | null;
+        createdAt: Date | null;
+    }[]>;
+    findOne(id: string): Promise<{
+        id: string;
+        name: string | null;
+        email: string;
+        avatarUrl: string | null;
+        createdAt: Date | null;
+    }>;
+    findOneByEmail(email: string): Promise<{
+        password: string;
+        id: string;
+        name: string | null;
+        email: string;
+        avatarUrl: string | null;
+        createdAt: Date | null;
+    }>;
 }

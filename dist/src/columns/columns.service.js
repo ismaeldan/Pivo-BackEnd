@@ -23,15 +23,16 @@ let ColumnsService = class ColumnsService {
     constructor(db) {
         this.db = db;
     }
-    async create(createColumnDto) {
+    async create(data) {
         const newId = (0, cuid2_1.createId)();
-        const order = createColumnDto.order ?? 0;
+        const order = data.order ?? 0;
         const [newColumn] = await this.db
             .insert(schema_1.columns)
             .values({
             id: newId,
-            title: createColumnDto.title,
+            title: data.title,
             order: order,
+            authorId: data.authorId,
         })
             .returning();
         return newColumn;

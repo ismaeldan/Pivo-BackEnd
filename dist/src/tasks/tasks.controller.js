@@ -23,7 +23,12 @@ let TasksController = class TasksController {
         this.tasksService = tasksService;
     }
     create(createTaskDto) {
-        return this.tasksService.create(createTaskDto);
+        const mockUserId = 'COLE_UM_USER_ID_VALIDO_DO_SEU_DB_AQUI';
+        const taskDataComAutor = {
+            ...createTaskDto,
+            authorId: mockUserId,
+        };
+        return this.tasksService.create(taskDataComAutor);
     }
     findAll() {
         return this.tasksService.findAll();
@@ -41,6 +46,7 @@ let TasksController = class TasksController {
 exports.TasksController = TasksController;
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_task_dto_1.CreateTaskDto]),
@@ -54,14 +60,14 @@ __decorate([
 ], TasksController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, update_task_dto_1.UpdateTaskDto]),
@@ -69,7 +75,8 @@ __decorate([
 ], TasksController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
+    __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)

@@ -1,5 +1,4 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateColumnDto } from './dto/create-column.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
 import { DB } from 'src/db/db.module';
 import type { DbType } from 'src/db/db.module';
@@ -11,17 +10,21 @@ import { createId } from '@paralleldrive/cuid2';
 export class ColumnsService {
   constructor(@Inject(DB) private db: DbType) {}
 
-  async create(createColumnDto: CreateColumnDto) {
+  async create(data: {
+    title: string;
+    order?: number;
+    authorId: string;
+  }) {
     const newId = createId();
-
-    const order = createColumnDto.order ?? 0;
+    const order = data.order ?? 0;
 
     const [newColumn] = await this.db
       .insert(columns)
       .values({
         id: newId,
-        title: createColumnDto.title,
+        title: data.title,
         order: order,
+        authorId: data.authorId,
       })
       .returning();
 

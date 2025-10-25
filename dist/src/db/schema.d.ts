@@ -53,6 +53,23 @@ export declare const users: import("drizzle-orm/pg-core").PgTableWithColumns<{
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
+        password: import("drizzle-orm/pg-core").PgColumn<{
+            name: "password";
+            tableName: "users";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
         avatarUrl: import("drizzle-orm/pg-core").PgColumn<{
             name: "avatar_url";
             tableName: "users";
@@ -158,6 +175,23 @@ export declare const columns: import("drizzle-orm/pg-core").PgTableWithColumns<{
             isAutoincrement: false;
             hasRuntimeDefault: false;
             enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        authorId: import("drizzle-orm/pg-core").PgColumn<{
+            name: "author_id";
+            tableName: "columns";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
             baseColumn: never;
             identity: undefined;
             generated: undefined;
@@ -276,9 +310,11 @@ export declare const tasks: import("drizzle-orm/pg-core").PgTableWithColumns<{
 }>;
 export declare const usersRelations: import("drizzle-orm").Relations<"users", {
     tasks: import("drizzle-orm").Many<"tasks">;
+    columns: import("drizzle-orm").Many<"columns">;
 }>;
 export declare const columnsRelations: import("drizzle-orm").Relations<"columns", {
     tasks: import("drizzle-orm").Many<"tasks">;
+    author: import("drizzle-orm").One<"users", true>;
 }>;
 export declare const tasksRelations: import("drizzle-orm").Relations<"tasks", {
     author: import("drizzle-orm").One<"users", true>;

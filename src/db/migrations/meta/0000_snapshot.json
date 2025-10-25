@@ -1,5 +1,5 @@
 {
-  "id": "3b8208b9-261e-4110-98eb-49e6a3c3dc02",
+  "id": "bf2c2c49-f3e3-40a5-9f66-8fd7fa6b3135",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -33,10 +33,30 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
+        },
+        "author_id": {
+          "name": "author_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "columns_author_id_users_id_fk": {
+          "name": "columns_author_id_users_id_fk",
+          "tableFrom": "columns",
+          "tableTo": "users",
+          "columnsFrom": [
+            "author_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -138,6 +158,12 @@
         },
         "email": {
           "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
           "type": "text",
           "primaryKey": false,
           "notNull": true

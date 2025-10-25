@@ -1,29 +1,25 @@
-// src/main.ts
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
-import { envSchema } from './config/env.validation';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  try {
-    envSchema.parse(process.env);
-    console.log('[ENV] Environment variables validated successfully.');
-  } catch (error) {
-    console.error('❌ Invalid environment variables:', error.format());
-    process.exit(1);
-  }
-
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+  
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
-  const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT') || 3001;
-
-  app.enableCors();
-
-  await app.listen(port);
-  console.log(`[Nest] Backend running on http://localhost:${port}`);
+  await app.listen(3100);
+  console.log(`Backend rodando em: ${await app.getUrl()}`);
 }
 bootstrap();

@@ -1,5 +1,5 @@
 import { pgTable, text, timestamp, integer } from 'drizzle-orm/pg-core';
-import { createId } from '@paralleldrive/cuid2'; // 1. Importar o CUID2
+import { createId } from '@paralleldrive/cuid2';
 import { relations } from 'drizzle-orm';
 
 export const users = pgTable('users', {
@@ -8,6 +8,7 @@ export const users = pgTable('users', {
     .primaryKey(),
   name: text('name'),
   email: text('email').notNull().unique(),
+  password: text('password').notNull(),
   avatarUrl: text('avatar_url'),
   createdAt: timestamp('created_at').defaultNow(),
 });
@@ -17,8 +18,11 @@ export const columns = pgTable('columns', {
     .$defaultFn(() => createId())
     .primaryKey(),
   title: text('title').notNull(),
-  order: integer('order').notNull().default(0), // Para reordenação
+  order: integer('order').notNull().default(0),
   createdAt: timestamp('created_at').defaultNow(),
+  authorId: text('author_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
 });
 
 export const tasks = pgTable('tasks', {
@@ -31,19 +35,24 @@ export const tasks = pgTable('tasks', {
 
   authorId: text('author_id')
     .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }), // Se o usuário for deletado, suas tasks somem
+    .references(() => users.id, { onDelete: 'cascade' }),
 
   columnId: text('column_id')
     .notNull()
-    .references(() => columns.id, { onDelete: 'cascade' }), // Se a coluna for deletada, suas tasks somem
+    .references(() => columns.id, { onDelete: 'cascade' }),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
   tasks: many(tasks),
+  columns: many(columns),
 }));
 
-export const columnsRelations = relations(columns, ({ many }) => ({
+export const columnsRelations = relations(columns, ({ many, one }) => ({ 
   tasks: many(tasks),
+  author: one(users, {
+    fields: [columns.authorId],
+    references: [users.id],
+  }),
 }));
 
 export const tasksRelations = relations(tasks, ({ one }) => ({

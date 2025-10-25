@@ -11,9 +11,5 @@ export class CreateTaskDto {
 
   @IsNotEmpty()
   @IsString()
-  authorId: string;
-
-  @IsNotEmpty()
-  @IsString()
   columnId: string;
 }

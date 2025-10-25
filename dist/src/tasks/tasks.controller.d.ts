@@ -8,24 +8,24 @@ export declare class TasksController {
         id: string;
         createdAt: Date | null;
         title: string;
-        description: string | null;
         authorId: string;
+        description: string | null;
         columnId: string;
     }>;
     findAll(): Promise<{
         id: string;
-        title: string;
-        description: string | null;
         createdAt: Date | null;
+        title: string;
         authorId: string;
+        description: string | null;
         columnId: string;
     }[]>;
     findOne(id: string): Promise<{
         id: string;
-        title: string;
-        description: string | null;
         createdAt: Date | null;
+        title: string;
         authorId: string;
+        description: string | null;
         columnId: string;
     }>;
     update(id: string, updateTaskDto: UpdateTaskDto): Promise<{
@@ -36,12 +36,5 @@ export declare class TasksController {
         authorId: string;
         columnId: string;
     }>;
-    remove(id: string): Promise<{
-        id: string;
-        createdAt: Date | null;
-        title: string;
-        description: string | null;
-        authorId: string;
-        columnId: string;
-    }>;
+    remove(id: string): Promise<void>;
 }

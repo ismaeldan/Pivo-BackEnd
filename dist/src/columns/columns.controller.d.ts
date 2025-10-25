@@ -9,29 +9,34 @@ export declare class ColumnsController {
         createdAt: Date | null;
         title: string;
         order: number;
+        authorId: string;
     }>;
     findAll(): Promise<{
         id: string;
         title: string;
         order: number;
         createdAt: Date | null;
+        authorId: string;
     }[]>;
     findOne(id: string): Promise<{
         id: string;
         title: string;
         order: number;
         createdAt: Date | null;
+        authorId: string;
     }>;
     update(id: string, updateColumnDto: UpdateColumnDto): Promise<{
         id: string;
         title: string;
         order: number;
         createdAt: Date | null;
+        authorId: string;
     }>;
     remove(id: string): Promise<{
         id: string;
         createdAt: Date | null;
         title: string;
         order: number;
+        authorId: string;
     }>;
 }
