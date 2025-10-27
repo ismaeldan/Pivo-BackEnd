@@ -22,7 +22,7 @@ export class TasksController {
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createTaskDto: CreateTaskDto) {
     
-    const mockUserId = 'COLE_UM_USER_ID_VALIDO_DO_SEU_DB_AQUI';
+    const mockUserId = 'hk099xu4p7ax87ktaoy7ezr2';
 
     const taskDataComAutor = {
       ...createTaskDto,
@@ -39,14 +39,14 @@ export class TasksController {
   }
   
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  findOne(@Param('id') id: string) {
     
     return this.tasksService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: string,
     @Body() updateTaskDto: UpdateTaskDto,
   ) {
 
@@ -55,7 +55,7 @@ export class TasksController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  remove(@Param('id') id: string) {
     return this.tasksService.remove(id);
   }
 }

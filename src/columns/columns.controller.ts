@@ -20,7 +20,7 @@ export class ColumnsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createColumnDto: CreateColumnDto) {
-    const mockUserId = 'COLE_UM_USER_ID_VALIDO_DO_SEU_DB_AQUI';
+    const mockUserId = 'hk099xu4p7ax87ktaoy7ezr2';
 
     const columnDataComAutor = {
       ...createColumnDto,

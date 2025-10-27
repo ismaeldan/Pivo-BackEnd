@@ -23,7 +23,7 @@ let ColumnsController = class ColumnsController {
         this.columnsService = columnsService;
     }
     create(createColumnDto) {
-        const mockUserId = 'COLE_UM_USER_ID_VALIDO_DO_SEU_DB_AQUI';
+        const mockUserId = 'hk099xu4p7ax87ktaoy7ezr2';
         const columnDataComAutor = {
             ...createColumnDto,
             authorId: mockUserId,

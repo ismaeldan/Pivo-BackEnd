@@ -38,7 +38,6 @@ export class UsersService {
         password: hashedPassword,
       })
       .returning({
-        
         id: users.id,
         name: users.name,
         email: users.email,
@@ -50,7 +49,6 @@ export class UsersService {
   }
   
   async findAll() {
-    // Cuidado: Retorna todos os usuários
     return this.db.query.users.findMany({
       columns: {
         password: false,
