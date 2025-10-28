@@ -30,15 +30,21 @@ let TasksService = class TasksService {
             description: data.description,
             authorId: data.authorId,
             columnId: data.columnId,
+            order: data.order,
         })
             .returning();
         return newTask;
     }
-    async findAll() {
-        const allTasks = await this.db.query.tasks.findMany({
+    async findAll(authorId, status) {
+        const conditions = [(0, drizzle_orm_1.eq)(schema_1.tasks.authorId, authorId)];
+        if (status) {
+            conditions.push((0, drizzle_orm_1.eq)(schema_1.tasks.status, status));
+        }
+        const userTasks = await this.db.query.tasks.findMany({
+            where: (0, drizzle_orm_1.and)(...conditions),
             orderBy: [(0, drizzle_orm_1.desc)(schema_1.tasks.createdAt)],
         });
-        return allTasks;
+        return userTasks;
     }
     async findOne(id) {
         const [task] = await this.db.query.tasks.findMany({
@@ -69,6 +75,15 @@ let TasksService = class TasksService {
             throw new common_1.NotFoundException(`Task com ID ${id} não encontrada.`);
         }
         return;
+    }
+    async search(query, authorId) {
+        const searchTerm = `%${query}%`;
+        const foundTasks = await this.db
+            .select()
+            .from(schema_1.tasks)
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.tasks.authorId, authorId), (0, drizzle_orm_1.or)((0, drizzle_orm_1.ilike)(schema_1.tasks.title, searchTerm), (0, drizzle_orm_1.ilike)(schema_1.tasks.description, searchTerm))))
+            .orderBy((0, drizzle_orm_1.desc)(schema_1.tasks.createdAt));
+        return foundTasks;
     }
 };
 exports.TasksService = TasksService;

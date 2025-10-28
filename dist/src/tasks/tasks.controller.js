@@ -17,6 +17,16 @@ const common_1 = require("@nestjs/common");
 const tasks_service_1 = require("./tasks.service");
 const create_task_dto_1 = require("./dto/create-task.dto");
 const update_task_dto_1 = require("./dto/update-task.dto");
+const class_validator_1 = require("class-validator");
+const schema_1 = require("../db/schema");
+class FindAllTasksDto {
+    status;
+}
+__decorate([
+    (0, class_validator_1.IsEnum)(schema_1.TaskStatus),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], FindAllTasksDto.prototype, "status", void 0);
 let TasksController = class TasksController {
     tasksService;
     constructor(tasksService) {
@@ -30,8 +40,17 @@ let TasksController = class TasksController {
         };
         return this.tasksService.create(taskDataComAutor);
     }
-    findAll() {
-        return this.tasksService.findAll();
+    findAll(queryParams) {
+        const mockUserId = 'hk099xu4p7ax87ktaoy7ezr2';
+        return this.tasksService.findAll(mockUserId, queryParams.status);
+    }
+    async searchTasks(searchQuery) {
+        if (!searchQuery) {
+            return [];
+        }
+        const mockUserId = 'hk099xu4p7ax87ktaoy7ezr2';
+        const results = await this.tasksService.search(searchQuery, mockUserId);
+        return results;
     }
     findOne(id) {
         return this.tasksService.findOne(id);
@@ -54,10 +73,18 @@ __decorate([
 ], TasksController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [FindAllTasksDto]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('search'),
+    __param(0, (0, common_1.Query)('q')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], TasksController.prototype, "searchTasks", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),

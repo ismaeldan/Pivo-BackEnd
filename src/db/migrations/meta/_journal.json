@@ -8,6 +8,20 @@
       "when": 1761410896050,
       "tag": "0000_pale_mephisto",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1761604638340,
+      "tag": "0001_first_maestro",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1761607634342,
+      "tag": "0002_far_mantis",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,7 @@
 import { pgTable, text, timestamp, integer } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
 import { relations } from 'drizzle-orm';
+import { pgEnum } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: text('id')
@@ -25,6 +26,14 @@ export const columns = pgTable('columns', {
     .references(() => users.id, { onDelete: 'cascade' }),
 });
 
+export const taskStatusEnum = pgEnum('task_status', ['pending', 'in_progress', 'completed']);
+
+export enum TaskStatus { 
+  Pending = 'pending',
+  InProgress = 'in_progress',
+  Completed = 'completed',
+}
+
 export const tasks = pgTable('tasks', {
   id: text('id')
     .$defaultFn(() => createId())
@@ -40,6 +49,10 @@ export const tasks = pgTable('tasks', {
   columnId: text('column_id')
     .notNull()
     .references(() => columns.id, { onDelete: 'cascade' }),
+
+  order: integer('order').notNull().default(0),
+
+  status: taskStatusEnum('status').notNull().default('pending'),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

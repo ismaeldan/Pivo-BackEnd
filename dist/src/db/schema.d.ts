@@ -199,6 +199,12 @@ export declare const columns: import("drizzle-orm/pg-core").PgTableWithColumns<{
     };
     dialect: "pg";
 }>;
+export declare const taskStatusEnum: import("drizzle-orm/pg-core").PgEnum<["pending", "in_progress", "completed"]>;
+export declare enum TaskStatus {
+    Pending = "pending",
+    InProgress = "in_progress",
+    Completed = "completed"
+}
 export declare const tasks: import("drizzle-orm/pg-core").PgTableWithColumns<{
     name: "tasks";
     schema: undefined;
@@ -301,6 +307,40 @@ export declare const tasks: import("drizzle-orm/pg-core").PgTableWithColumns<{
             isAutoincrement: false;
             hasRuntimeDefault: false;
             enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        order: import("drizzle-orm/pg-core").PgColumn<{
+            name: "order";
+            tableName: "tasks";
+            dataType: "number";
+            columnType: "PgInteger";
+            data: number;
+            driverParam: string | number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        status: import("drizzle-orm/pg-core").PgColumn<{
+            name: "status";
+            tableName: "tasks";
+            dataType: "string";
+            columnType: "PgEnumColumn";
+            data: "pending" | "in_progress" | "completed";
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: ["pending", "in_progress", "completed"];
             baseColumn: never;
             identity: undefined;
             generated: undefined;

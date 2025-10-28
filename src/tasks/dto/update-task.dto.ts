@@ -1,4 +1,5 @@
-import { IsString, IsUUID, IsOptional } from 'class-validator';
+import { IsString, IsUUID, IsOptional, IsNumber, IsEnum } from 'class-validator';
+import { TaskStatus } from 'src/db/schema';
 
 export class UpdateTaskDto {
   @IsString()
@@ -12,4 +13,12 @@ export class UpdateTaskDto {
   @IsUUID()
   @IsOptional()
   columnId?: string;
+  
+  @IsNumber()
+  @IsOptional()
+  order?: number;
+
+  @IsEnum(TaskStatus)
+  @IsOptional()
+  status?: TaskStatus;
 }

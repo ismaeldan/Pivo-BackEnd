@@ -11,10 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateTaskDto = void 0;
 const class_validator_1 = require("class-validator");
+const schema_1 = require("../../db/schema");
 class UpdateTaskDto {
     title;
     description;
     columnId;
+    order;
+    status;
 }
 exports.UpdateTaskDto = UpdateTaskDto;
 __decorate([
@@ -32,4 +35,14 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateTaskDto.prototype, "columnId", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UpdateTaskDto.prototype, "order", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(schema_1.TaskStatus),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateTaskDto.prototype, "status", void 0);
 //# sourceMappingURL=update-task.dto.js.map

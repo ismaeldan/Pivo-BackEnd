@@ -25,10 +25,10 @@ export declare class UsersService {
         createdAt: Date | null;
     }>;
     findOneByEmail(email: string): Promise<{
-        password: string;
         id: string;
         name: string | null;
         email: string;
+        password: string;
         avatarUrl: string | null;
         createdAt: Date | null;
     }>;

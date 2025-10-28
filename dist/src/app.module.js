@@ -15,6 +15,7 @@ const users_module_1 = require("./users/users.module");
 const tasks_module_1 = require("./tasks/tasks.module");
 const columns_module_1 = require("./columns/columns.module");
 const auth_module_1 = require("./auth/auth.module");
+const board_module_1 = require("./board/board.module");
 function validate(config) {
     const validatedConfig = env_validation_1.envSchema.parse(config);
     return validatedConfig;
@@ -35,6 +36,7 @@ exports.AppModule = AppModule = __decorate([
             tasks_module_1.TasksModule,
             columns_module_1.ColumnsModule,
             auth_module_1.AuthModule,
+            board_module_1.BoardModule,
         ],
         controllers: [],
         providers: [],

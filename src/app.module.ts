@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ColumnsModule } from './columns/columns.module';
 import { AuthModule } from './auth/auth.module';
+import { BoardModule } from './board/board.module';
 
 function validate(config: Record<string, unknown>) {
   const validatedConfig = envSchema.parse(config);
@@ -24,6 +25,7 @@ function validate(config: Record<string, unknown>) {
     TasksModule,
     ColumnsModule,
     AuthModule,
+    BoardModule,
   ],
   controllers: [],
   providers: [],

@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tasksRelations = exports.columnsRelations = exports.usersRelations = exports.tasks = exports.columns = exports.users = void 0;
+exports.tasksRelations = exports.columnsRelations = exports.usersRelations = exports.tasks = exports.TaskStatus = exports.taskStatusEnum = exports.columns = exports.users = void 0;
 const pg_core_1 = require("drizzle-orm/pg-core");
 const cuid2_1 = require("@paralleldrive/cuid2");
 const drizzle_orm_1 = require("drizzle-orm");
+const pg_core_2 = require("drizzle-orm/pg-core");
 exports.users = (0, pg_core_1.pgTable)('users', {
     id: (0, pg_core_1.text)('id')
         .$defaultFn(() => (0, cuid2_1.createId)())
@@ -25,6 +26,13 @@ exports.columns = (0, pg_core_1.pgTable)('columns', {
         .notNull()
         .references(() => exports.users.id, { onDelete: 'cascade' }),
 });
+exports.taskStatusEnum = (0, pg_core_2.pgEnum)('task_status', ['pending', 'in_progress', 'completed']);
+var TaskStatus;
+(function (TaskStatus) {
+    TaskStatus["Pending"] = "pending";
+    TaskStatus["InProgress"] = "in_progress";
+    TaskStatus["Completed"] = "completed";
+})(TaskStatus || (exports.TaskStatus = TaskStatus = {}));
 exports.tasks = (0, pg_core_1.pgTable)('tasks', {
     id: (0, pg_core_1.text)('id')
         .$defaultFn(() => (0, cuid2_1.createId)())
@@ -38,6 +46,8 @@ exports.tasks = (0, pg_core_1.pgTable)('tasks', {
     columnId: (0, pg_core_1.text)('column_id')
         .notNull()
         .references(() => exports.columns.id, { onDelete: 'cascade' }),
+    order: (0, pg_core_1.integer)('order').notNull().default(0),
+    status: (0, exports.taskStatusEnum)('status').notNull().default('pending'),
 });
 exports.usersRelations = (0, drizzle_orm_1.relations)(exports.users, ({ many }) => ({
     tasks: many(exports.tasks),
