@@ -1,98 +1,117 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Pivô - Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este é o repositório do backend para a aplicação To-Do List "Pivô". Construído com NestJS, Drizzle ORM e PostgreSQL, ele fornece a API necessária para o frontend (desenvolvido separadamente em Next.js).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## ✨ Funcionalidades Implementadas
 
-## Description
+* **Autenticação:**
+    * Registro de usuários (`POST /users`) com hashing de senha (bcrypt).
+    * Login de usuários (`POST /auth/login`) com geração de tokens JWT.
+    * Proteção de rotas da API usando JWT (`JwtAuthGuard`).
+* **Colunas (Kanban):**
+    * CRUD completo para colunas (`POST`, `GET`, `PATCH`, `DELETE /columns/:id`).
+    * Associação de colunas a usuários (`authorId`).
+    * Ordenação de colunas.
+* **Tasks:**
+    * CRUD completo para tasks (`POST`, `GET`, `PATCH`, `DELETE /tasks/:id`).
+    * Associação de tasks a usuários (`authorId`) e colunas (`columnId`).
+    * Ordenação de tasks (`order`).
+    * Status de tasks (pending, in_progress, completed) com validação via Enum.
+    * Endpoint de busca (`GET /tasks/search?q=...`) por título/descrição.
+    * Endpoint de listagem com filtro por status (`GET /tasks?status=...`).
+* **Board:**
+    * Endpoint principal (`GET /board`) que retorna todas as colunas do usuário autenticado, com suas tasks aninhadas e ordenadas.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🚀 Tecnologias Utilizadas
 
-## Project setup
+* **Framework:** [NestJS](https://nestjs.com/)
+* **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
+* **ORM:** [Drizzle ORM](https://orm.drizzle.team/)
+* **Banco de Dados:** [PostgreSQL](https://www.postgresql.org/) (executando em [Docker](https://www.docker.com/))
+* **Autenticação:** [Passport.js](http://www.passportjs.org/) (`passport-local`, `passport-jwt`), `@nestjs/jwt`, `bcrypt`
+* **Validação:** `class-validator`, `class-transformer`, `zod` (para variáveis de ambiente)
+* **Containerização:** Docker, Docker Compose
+* **Gerenciador de Pacotes:** [pnpm](https://pnpm.io/)
 
-```bash
-$ pnpm install
-```
+## 📋 Pré-requisitos
 
-## Compile and run the project
+Antes de começar, certifique-se de ter instalado:
 
-```bash
-# development
-$ pnpm run start
+* [Node.js](https://nodejs.org/) (versão LTS recomendada, ex: >=18)
+* [pnpm](https://pnpm.io/installation)
+* [Docker](https://docs.docker.com/get-docker/)
+* [Docker Compose](https://docs.docker.com/compose/install/) (geralmente incluído na instalação do Docker Desktop)
 
-# watch mode
-$ pnpm run start:dev
+## ⚙️ Configuração e Instalação
 
-# production mode
-$ pnpm run start:prod
-```
+1.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/ismaeldan/Pivo-BackEnd.git](https://github.com/ismaeldan/Pivo-BackEnd.git)
+    cd Pivo-BackEnd
+    ```
 
-## Run tests
+2.  **Crie o arquivo de ambiente:**
+    * Copie o arquivo de exemplo: `cp .env.example .env` (Crie um `.env.example` se não existir, veja a seção "Variáveis de Ambiente" abaixo).
+    * **Preencha as variáveis** no arquivo `.env` com suas configurações (especialmente `JWT_SECRET`).
 
-```bash
-# unit tests
-$ pnpm run test
+3.  **Instale as dependências:**
+    ```bash
+    pnpm install
+    ```
 
-# e2e tests
-$ pnpm run test:e2e
+## 💾 Configuração do Banco de Dados
 
-# test coverage
-$ pnpm run test:cov
-```
+1.  **Inicie o container PostgreSQL:**
+    * Certifique-se que o Docker está rodando.
+    * Execute o Docker Compose (as credenciais serão lidas do seu `.env`):
+        ```bash
+        docker-compose up -d
+        ```
 
-## Deployment
+2.  **Aplique as migrações:**
+    * Gere os arquivos SQL de migração com base no schema Drizzle:
+        ```bash
+        pnpm run db:generate
+        ```
+    * Aplique as migrações ao banco de dados rodando no Docker:
+        ```bash
+        pnpm run db:migrate
+        ```
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+3.  **(Opcional) Visualize o banco de dados:**
+    * Você pode usar o Drizzle Studio para ver e manipular os dados:
+        ```bash
+        pnpm run db:studio
+        ```
+    * Ou conecte-se usando um cliente como Beekeeper Studio, DBeaver, etc., usando as credenciais do `.env`.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## ▶️ Executando a Aplicação (Modo de Desenvolvimento)
 
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
+1.  **Inicie o servidor NestJS:**
+    ```bash
+    pnpm run start:dev
+    ```
+    A aplicação estará disponível em `http://localhost:<PORT>` (o `PORT` definido no seu `.env`, padrão 3001). O servidor reiniciará automaticamente ao detectar alterações nos arquivos.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 🔑 Variáveis de Ambiente
 
-## Resources
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 
-Check out a few resources that may come in handy when working with NestJS:
+```dotenv
+# Configuração do Banco de Dados (usado pelo docker-compose e db.module)
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USER=docker
+DATABASE_PASSWORD=docker # Troque por uma senha mais segura se desejar
+DATABASE_NAME=pivo
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# Usado pelo Drizzle para conexão direta (se db.module usar DATABASE_URL)
+# DATABASE_URL="postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}"
 
-## Support
+# Configuração da Aplicação NestJS
+PORT=3001
+NODE_ENV=development
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Configuração do JWT
+JWT_SECRET=SUA_CHAVE_SECRETA_MUITO_FORTE_AQUI # Gere uma string aleatória segura
+JWT_EXPIRATION=3600 # Tempo de expiração em segundos (ex: 3600 para 1 hora)
