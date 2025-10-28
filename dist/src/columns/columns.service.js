@@ -37,34 +37,38 @@ let ColumnsService = class ColumnsService {
             .returning();
         return newColumn;
     }
-    async findAll() {
+    async findAll(authorId) {
         const allColumns = await this.db
             .select()
             .from(schema_1.columns)
+            .where((0, drizzle_orm_1.eq)(schema_1.columns.authorId, authorId))
             .orderBy((0, drizzle_orm_1.asc)(schema_1.columns.order));
         return allColumns;
     }
-    async findOne(id) {
+    async findOne(id, authorId) {
         const [column] = await this.db
             .select()
             .from(schema_1.columns)
-            .where((0, drizzle_orm_1.eq)(schema_1.columns.id, id));
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.columns.id, id), (0, drizzle_orm_1.eq)(schema_1.columns.authorId, authorId)));
         if (!column) {
             throw new common_1.NotFoundException(`Coluna com ID ${id} não encontrada.`);
         }
         return column;
     }
-    async update(id, updateColumnDto) {
-        await this.findOne(id);
+    async update(id, updateColumnDto, authorId) {
+        await this.findOne(id, authorId);
         const [updatedColumn] = await this.db
             .update(schema_1.columns)
             .set(updateColumnDto)
             .where((0, drizzle_orm_1.eq)(schema_1.columns.id, id))
             .returning();
+        if (!updatedColumn) {
+            throw new common_1.NotFoundException(`Coluna com ID ${id} não encontrada durante atualização.`);
+        }
         return updatedColumn;
     }
-    async remove(id) {
-        await this.findOne(id);
+    async remove(id, authorId) {
+        await this.findOne(id, authorId);
         const [deletedColumn] = await this.db
             .delete(schema_1.columns)
             .where((0, drizzle_orm_1.eq)(schema_1.columns.id, id))

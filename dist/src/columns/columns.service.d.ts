@@ -14,28 +14,28 @@ export declare class ColumnsService {
         order: number;
         authorId: string;
     }>;
-    findAll(): Promise<{
+    findAll(authorId: string): Promise<{
         id: string;
         title: string;
         order: number;
         createdAt: Date | null;
         authorId: string;
     }[]>;
-    findOne(id: string): Promise<{
+    findOne(id: string, authorId: string): Promise<{
         id: string;
         title: string;
         order: number;
         createdAt: Date | null;
         authorId: string;
     }>;
-    update(id: string, updateColumnDto: UpdateColumnDto): Promise<{
+    update(id: string, updateColumnDto: UpdateColumnDto, authorId: string): Promise<{
         id: string;
         title: string;
         order: number;
         createdAt: Date | null;
         authorId: string;
     }>;
-    remove(id: string): Promise<{
+    remove(id: string, authorId: string): Promise<{
         id: string;
         createdAt: Date | null;
         title: string;

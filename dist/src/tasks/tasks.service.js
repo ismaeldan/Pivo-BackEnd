@@ -31,6 +31,7 @@ let TasksService = class TasksService {
             authorId: data.authorId,
             columnId: data.columnId,
             order: data.order,
+            status: data.status ?? 'pending'
         })
             .returning();
         return newTask;
@@ -42,20 +43,30 @@ let TasksService = class TasksService {
         }
         const userTasks = await this.db.query.tasks.findMany({
             where: (0, drizzle_orm_1.and)(...conditions),
-            orderBy: [(0, drizzle_orm_1.desc)(schema_1.tasks.createdAt)],
+            orderBy: [(0, drizzle_orm_1.asc)(schema_1.tasks.order), (0, drizzle_orm_1.asc)(schema_1.tasks.createdAt)],
         });
         return userTasks;
     }
-    async findOne(id) {
+    async search(query, authorId) {
+        const searchTerm = `%${query}%`;
+        const foundTasks = await this.db
+            .select()
+            .from(schema_1.tasks)
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.tasks.authorId, authorId), (0, drizzle_orm_1.or)((0, drizzle_orm_1.ilike)(schema_1.tasks.title, searchTerm), (0, drizzle_orm_1.ilike)(schema_1.tasks.description, searchTerm))))
+            .orderBy((0, drizzle_orm_1.desc)(schema_1.tasks.createdAt));
+        return foundTasks;
+    }
+    async findOne(id, authorId) {
         const [task] = await this.db.query.tasks.findMany({
-            where: (0, drizzle_orm_1.eq)(schema_1.tasks.id, id),
+            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.tasks.id, id), (0, drizzle_orm_1.eq)(schema_1.tasks.authorId, authorId)),
         });
         if (!task) {
             throw new common_1.NotFoundException(`Task com ID ${id} não encontrada.`);
         }
         return task;
     }
-    async update(id, updateTaskDto) {
+    async update(id, updateTaskDto, authorId) {
+        await this.findOne(id, authorId);
         const [updatedTask] = await this.db
             .update(schema_1.tasks)
             .set(updateTaskDto)
@@ -66,7 +77,8 @@ let TasksService = class TasksService {
         }
         return updatedTask;
     }
-    async remove(id) {
+    async remove(id, authorId) {
+        await this.findOne(id, authorId);
         const [deletedTask] = await this.db
             .delete(schema_1.tasks)
             .where((0, drizzle_orm_1.eq)(schema_1.tasks.id, id))
@@ -75,15 +87,6 @@ let TasksService = class TasksService {
             throw new common_1.NotFoundException(`Task com ID ${id} não encontrada.`);
         }
         return;
-    }
-    async search(query, authorId) {
-        const searchTerm = `%${query}%`;
-        const foundTasks = await this.db
-            .select()
-            .from(schema_1.tasks)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.tasks.authorId, authorId), (0, drizzle_orm_1.or)((0, drizzle_orm_1.ilike)(schema_1.tasks.title, searchTerm), (0, drizzle_orm_1.ilike)(schema_1.tasks.description, searchTerm))))
-            .orderBy((0, drizzle_orm_1.desc)(schema_1.tasks.createdAt));
-        return foundTasks;
     }
 };
 exports.TasksService = TasksService;

@@ -1,9 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { UpdateColumnDto } from './dto/update-column.dto';
 import { DB } from 'src/db/db.module';
 import type { DbType } from 'src/db/db.module';
 import { columns } from 'src/db/schema';
-import { asc, eq } from 'drizzle-orm';
+import { asc, eq, and } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 
 @Injectable()
@@ -31,20 +31,24 @@ export class ColumnsService {
     return newColumn;
   }
 
-  async findAll() {
+  async findAll(authorId: string) {
     const allColumns = await this.db
       .select()
       .from(columns)
+      .where(eq(columns.authorId, authorId))
       .orderBy(asc(columns.order));
 
     return allColumns;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, authorId: string) {
     const [column] = await this.db
       .select()
       .from(columns)
-      .where(eq(columns.id, id));
+      .where(and(
+        eq(columns.id, id),
+        eq(columns.authorId, authorId)
+      ));
 
     if (!column) {
       throw new NotFoundException(`Coluna com ID ${id} não encontrada.`);
@@ -53,8 +57,8 @@ export class ColumnsService {
     return column;
   }
 
-  async update(id: string, updateColumnDto: UpdateColumnDto) {
-    await this.findOne(id);
+  async update(id: string, updateColumnDto: UpdateColumnDto, authorId: string) {
+    await this.findOne(id, authorId);
 
     const [updatedColumn] = await this.db
       .update(columns)
@@ -62,11 +66,15 @@ export class ColumnsService {
       .where(eq(columns.id, id))
       .returning();
 
+      if (!updatedColumn) { 
+       throw new NotFoundException(`Coluna com ID ${id} não encontrada durante atualização.`);
+    }
+
     return updatedColumn;
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, authorId: string) {
+    await this.findOne(id, authorId);
 
     const [deletedColumn] = await this.db
       .delete(columns)

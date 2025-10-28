@@ -10,6 +10,7 @@ export declare class TasksService {
         authorId: string;
         columnId: string;
         order?: number;
+        status?: TaskStatus;
     }): Promise<{
         id: string;
         createdAt: Date | null;
@@ -30,27 +31,6 @@ export declare class TasksService {
         columnId: string;
         status: "pending" | "in_progress" | "completed";
     }[]>;
-    findOne(id: string): Promise<{
-        id: string;
-        createdAt: Date | null;
-        title: string;
-        order: number;
-        authorId: string;
-        description: string | null;
-        columnId: string;
-        status: "pending" | "in_progress" | "completed";
-    }>;
-    update(id: string, updateTaskDto: UpdateTaskDto): Promise<{
-        id: string;
-        title: string;
-        description: string | null;
-        createdAt: Date | null;
-        authorId: string;
-        columnId: string;
-        order: number;
-        status: "pending" | "in_progress" | "completed";
-    }>;
-    remove(id: string): Promise<void>;
     search(query: string, authorId: string): Promise<{
         id: string;
         title: string;
@@ -61,4 +41,25 @@ export declare class TasksService {
         order: number;
         status: "pending" | "in_progress" | "completed";
     }[]>;
+    findOne(id: string, authorId: string): Promise<{
+        id: string;
+        createdAt: Date | null;
+        title: string;
+        order: number;
+        authorId: string;
+        description: string | null;
+        columnId: string;
+        status: "pending" | "in_progress" | "completed";
+    }>;
+    update(id: string, updateTaskDto: UpdateTaskDto, authorId: string): Promise<{
+        id: string;
+        title: string;
+        description: string | null;
+        createdAt: Date | null;
+        authorId: string;
+        columnId: string;
+        order: number;
+        status: "pending" | "in_progress" | "completed";
+    }>;
+    remove(id: string, authorId: string): Promise<void>;
 }

@@ -1,8 +1,14 @@
 import { BoardService } from './board.service';
+interface AuthenticatedRequest extends Request {
+    user: {
+        userId: string;
+        email: string;
+    };
+}
 export declare class BoardController {
     private readonly boardService;
     constructor(boardService: BoardService);
-    getBoard(): Promise<{
+    getBoard(req: AuthenticatedRequest): Promise<{
         id: string;
         createdAt: Date | null;
         title: string;
@@ -20,3 +26,4 @@ export declare class BoardController {
         }[];
     }[]>;
 }
+export {};

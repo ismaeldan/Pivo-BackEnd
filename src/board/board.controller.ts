@@ -1,14 +1,23 @@
-import { Controller, Get} from '@nestjs/common';
+import { Controller, Get, UseGuards, Request} from '@nestjs/common';
 import { BoardService } from './board.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard'
+
+interface AuthenticatedRequest extends Request {
+  user: {
+    userId: string;
+    email: string;
+  };
+}
 
 @Controller('board')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
   @Get()
-  async getBoard() {
+  @UseGuards(JwtAuthGuard)
+  async getBoard(@Request() req: AuthenticatedRequest,) {
     
-    const mockUserId = 'hk099xu4p7ax87ktaoy7ezr2'; 
-    return this.boardService.getBoardData(mockUserId);
+    const userId = req.user.userId;
+    return this.boardService.getBoardData(userId);
   }
 }

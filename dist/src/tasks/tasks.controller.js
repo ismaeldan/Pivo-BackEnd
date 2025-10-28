@@ -19,6 +19,7 @@ const create_task_dto_1 = require("./dto/create-task.dto");
 const update_task_dto_1 = require("./dto/update-task.dto");
 const class_validator_1 = require("class-validator");
 const schema_1 = require("../db/schema");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 class FindAllTasksDto {
     status;
 }
@@ -32,34 +33,37 @@ let TasksController = class TasksController {
     constructor(tasksService) {
         this.tasksService = tasksService;
     }
-    create(createTaskDto) {
-        const mockUserId = 'hk099xu4p7ax87ktaoy7ezr2';
+    create(createTaskDto, req) {
+        const userId = req.user.userId;
         const taskDataComAutor = {
             ...createTaskDto,
-            authorId: mockUserId,
+            authorId: userId,
         };
         return this.tasksService.create(taskDataComAutor);
     }
-    findAll(queryParams) {
-        const mockUserId = 'hk099xu4p7ax87ktaoy7ezr2';
-        return this.tasksService.findAll(mockUserId, queryParams.status);
+    findAll(queryParams, req) {
+        const userId = req.user.userId;
+        return this.tasksService.findAll(userId, queryParams.status);
     }
-    async searchTasks(searchQuery) {
+    async searchTasks(searchQuery, req) {
         if (!searchQuery) {
             return [];
         }
-        const mockUserId = 'hk099xu4p7ax87ktaoy7ezr2';
-        const results = await this.tasksService.search(searchQuery, mockUserId);
+        const userId = req.user.userId;
+        const results = await this.tasksService.search(searchQuery, userId);
         return results;
     }
-    findOne(id) {
-        return this.tasksService.findOne(id);
+    findOne(id, req) {
+        const userId = req.user.userId;
+        return this.tasksService.findOne(id, userId);
     }
-    update(id, updateTaskDto) {
-        return this.tasksService.update(id, updateTaskDto);
+    update(id, updateTaskDto, req) {
+        const userId = req.user.userId;
+        return this.tasksService.update(id, updateTaskDto, userId);
     }
-    remove(id) {
-        return this.tasksService.remove(id);
+    remove(id, req) {
+        const userId = req.user.userId;
+        return this.tasksService.remove(id, userId);
     }
 };
 exports.TasksController = TasksController;
@@ -67,49 +71,56 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_task_dto_1.CreateTaskDto]),
+    __metadata("design:paramtypes", [create_task_dto_1.CreateTaskDto, Object]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [FindAllTasksDto]),
+    __metadata("design:paramtypes", [FindAllTasksDto, Object]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('search'),
     __param(0, (0, common_1.Query)('q')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], TasksController.prototype, "searchTasks", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_task_dto_1.UpdateTaskDto]),
+    __metadata("design:paramtypes", [String, update_task_dto_1.UpdateTaskDto, Object]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "remove", null);
 exports.TasksController = TasksController = __decorate([
     (0, common_1.Controller)('tasks'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [tasks_service_1.TasksService])
 ], TasksController);
 //# sourceMappingURL=tasks.controller.js.map

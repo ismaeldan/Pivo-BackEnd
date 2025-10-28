@@ -17,30 +17,35 @@ const common_1 = require("@nestjs/common");
 const columns_service_1 = require("./columns.service");
 const create_column_dto_1 = require("./dto/create-column.dto");
 const update_column_dto_1 = require("./dto/update-column.dto");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 let ColumnsController = class ColumnsController {
     columnsService;
     constructor(columnsService) {
         this.columnsService = columnsService;
     }
-    create(createColumnDto) {
-        const mockUserId = 'hk099xu4p7ax87ktaoy7ezr2';
+    create(createColumnDto, req) {
+        const userId = req.user.userId;
         const columnDataComAutor = {
             ...createColumnDto,
-            authorId: mockUserId,
+            authorId: userId,
         };
         return this.columnsService.create(columnDataComAutor);
     }
-    findAll() {
-        return this.columnsService.findAll();
+    findAll(req) {
+        const userId = req.user.userId;
+        return this.columnsService.findAll(userId);
     }
-    findOne(id) {
-        return this.columnsService.findOne(id);
+    findOne(id, req) {
+        const userId = req.user.userId;
+        return this.columnsService.findOne(id, userId);
     }
-    update(id, updateColumnDto) {
-        return this.columnsService.update(id, updateColumnDto);
+    update(id, updateColumnDto, req) {
+        const userId = req.user.userId;
+        return this.columnsService.update(id, updateColumnDto, userId);
     }
-    remove(id) {
-        return this.columnsService.remove(id);
+    remove(id, req) {
+        const userId = req.user.userId;
+        return this.columnsService.remove(id, userId);
     }
 };
 exports.ColumnsController = ColumnsController;
@@ -48,41 +53,47 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_column_dto_1.CreateColumnDto]),
+    __metadata("design:paramtypes", [create_column_dto_1.CreateColumnDto, Object]),
     __metadata("design:returntype", void 0)
 ], ColumnsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], ColumnsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], ColumnsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_column_dto_1.UpdateColumnDto]),
+    __metadata("design:paramtypes", [String, update_column_dto_1.UpdateColumnDto, Object]),
     __metadata("design:returntype", void 0)
 ], ColumnsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], ColumnsController.prototype, "remove", null);
 exports.ColumnsController = ColumnsController = __decorate([
     (0, common_1.Controller)('columns'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [columns_service_1.ColumnsService])
 ], ColumnsController);
 //# sourceMappingURL=columns.controller.js.map
