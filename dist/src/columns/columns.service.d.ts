@@ -35,11 +35,5 @@ export declare class ColumnsService {
         createdAt: Date | null;
         authorId: string;
     }>;
-    remove(id: string, authorId: string): Promise<{
-        id: string;
-        createdAt: Date | null;
-        title: string;
-        order: number;
-        authorId: string;
-    }>;
+    remove(id: string, authorId: string): Promise<void>;
 }

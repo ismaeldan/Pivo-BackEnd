@@ -15,24 +15,24 @@ export declare class TasksController {
     private readonly tasksService;
     constructor(tasksService: TasksService);
     create(createTaskDto: CreateTaskDto, req: AuthenticatedRequest): Promise<{
-        id: string;
-        createdAt: Date | null;
         title: string;
-        order: number;
-        authorId: string;
         description: string | null;
         columnId: string;
+        order: number;
         status: "pending" | "in_progress" | "completed";
+        id: string;
+        createdAt: Date | null;
+        authorId: string;
     }>;
     findAll(queryParams: FindAllTasksDto, req: AuthenticatedRequest): Promise<{
-        id: string;
-        createdAt: Date | null;
         title: string;
-        order: number;
-        authorId: string;
         description: string | null;
         columnId: string;
+        order: number;
         status: "pending" | "in_progress" | "completed";
+        id: string;
+        createdAt: Date | null;
+        authorId: string;
     }[]>;
     searchTasks(searchQuery: string, req: AuthenticatedRequest): Promise<{
         id: string;
@@ -45,14 +45,14 @@ export declare class TasksController {
         status: "pending" | "in_progress" | "completed";
     }[]>;
     findOne(id: string, req: AuthenticatedRequest): Promise<{
-        id: string;
-        createdAt: Date | null;
         title: string;
-        order: number;
-        authorId: string;
         description: string | null;
         columnId: string;
+        order: number;
         status: "pending" | "in_progress" | "completed";
+        id: string;
+        createdAt: Date | null;
+        authorId: string;
     }>;
     update(id: string, updateTaskDto: UpdateTaskDto, req: AuthenticatedRequest): Promise<{
         id: string;

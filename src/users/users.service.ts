@@ -47,14 +47,6 @@ export class UsersService {
 
     return newUser;
   }
-  
-  async findAll() {
-    return this.db.query.users.findMany({
-      columns: {
-        password: false,
-      },
-    });
-  }
 
   async findOne(id: string) {
     const [user] = await this.db.query.users.findMany({
@@ -75,4 +67,60 @@ export class UsersService {
     });
     return user; 
   }
+  
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const [currentUser] = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.id, id));
+
+    if (!currentUser) {
+      throw new NotFoundException(`Usuário com ID ${id} não encontrado.`);
+    }
+
+    const dataToUpdate: Partial<typeof users.$inferInsert> = {};
+
+    if (updateUserDto.name) {
+      dataToUpdate.name = updateUserDto.name;
+    }
+
+    if (updateUserDto.email && updateUserDto.email !== currentUser.email) {
+      const [existingUser] = await this.db
+        .select()
+        .from(users)
+        .where(eq(users.email, updateUserDto.email));
+      
+      if (existingUser) {
+        throw new ConflictException('O novo e-mail fornecido já está em uso.');
+      }
+      dataToUpdate.email = updateUserDto.email;
+    }
+    
+    if (updateUserDto.password) {
+      const saltRounds = 10;
+      dataToUpdate.password = await bcrypt.hash(
+        updateUserDto.password,
+        saltRounds,
+      );
+    }
+    
+    if (Object.keys(dataToUpdate).length === 0) {
+      return this.findOne(id);
+    }
+    
+    const [updatedUser] = await this.db
+      .update(users)
+      .set(dataToUpdate)
+      .where(eq(users.id, id))
+      .returning({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        avatarUrl: users.avatarUrl,
+        createdAt: users.createdAt,
+      });
+
+    return updatedUser;
+  }
 }
+

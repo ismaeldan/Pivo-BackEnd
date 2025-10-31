@@ -38,12 +38,6 @@ export declare class ColumnsController {
         createdAt: Date | null;
         authorId: string;
     }>;
-    remove(id: string, req: AuthenticatedRequest): Promise<{
-        id: string;
-        createdAt: Date | null;
-        title: string;
-        order: number;
-        authorId: string;
-    }>;
+    remove(id: string, req: AuthenticatedRequest): Promise<void>;
 }
 export {};

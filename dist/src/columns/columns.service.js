@@ -24,14 +24,27 @@ let ColumnsService = class ColumnsService {
         this.db = db;
     }
     async create(data) {
-        const newId = (0, cuid2_1.createId)();
-        const order = data.order ?? 0;
+        let newOrder;
+        if (data.order === undefined) {
+            const [maxOrderResult] = await this.db
+                .select({ value: (0, drizzle_orm_1.max)(schema_1.columns.order) })
+                .from(schema_1.columns)
+                .where((0, drizzle_orm_1.eq)(schema_1.columns.authorId, data.authorId));
+            newOrder = (maxOrderResult?.value ?? -1) + 1;
+        }
+        else {
+            newOrder = data.order;
+            await this.db
+                .update(schema_1.columns)
+                .set({ order: (0, drizzle_orm_1.sql) `${schema_1.columns.order} + 1` })
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.columns.authorId, data.authorId), (0, drizzle_orm_1.gte)(schema_1.columns.order, newOrder)));
+        }
         const [newColumn] = await this.db
             .insert(schema_1.columns)
             .values({
-            id: newId,
+            id: (0, cuid2_1.createId)(),
             title: data.title,
-            order: order,
+            order: newOrder,
             authorId: data.authorId,
         })
             .returning();
@@ -56,24 +69,61 @@ let ColumnsService = class ColumnsService {
         return column;
     }
     async update(id, updateColumnDto, authorId) {
-        await this.findOne(id, authorId);
-        const [updatedColumn] = await this.db
-            .update(schema_1.columns)
-            .set(updateColumnDto)
-            .where((0, drizzle_orm_1.eq)(schema_1.columns.id, id))
-            .returning();
-        if (!updatedColumn) {
-            throw new common_1.NotFoundException(`Coluna com ID ${id} não encontrada durante atualização.`);
+        const columnToMove = await this.findOne(id, authorId);
+        const newOrder = updateColumnDto.order;
+        const isReordering = newOrder !== undefined && newOrder !== columnToMove.order;
+        if (!isReordering) {
+            const [updatedColumn] = await this.db
+                .update(schema_1.columns)
+                .set(updateColumnDto)
+                .where((0, drizzle_orm_1.eq)(schema_1.columns.id, id))
+                .returning();
+            if (!updatedColumn) {
+                throw new common_1.NotFoundException(`Coluna com ID ${id} não encontrada durante atualização.`);
+            }
+            return updatedColumn;
         }
-        return updatedColumn;
+        await this.db.transaction(async (tx) => {
+            const oldOrder = columnToMove.order;
+            if (newOrder < oldOrder) {
+                await tx
+                    .update(schema_1.columns)
+                    .set({ order: (0, drizzle_orm_1.sql) `${schema_1.columns.order} + 1` })
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.columns.authorId, authorId), (0, drizzle_orm_1.gte)(schema_1.columns.order, newOrder), (0, drizzle_orm_1.lt)(schema_1.columns.order, oldOrder)));
+            }
+            else {
+                await tx
+                    .update(schema_1.columns)
+                    .set({ order: (0, drizzle_orm_1.sql) `${schema_1.columns.order} - 1` })
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.columns.authorId, authorId), (0, drizzle_orm_1.gt)(schema_1.columns.order, oldOrder), (0, drizzle_orm_1.lte)(schema_1.columns.order, newOrder)));
+            }
+            await tx
+                .update(schema_1.columns)
+                .set(updateColumnDto)
+                .where((0, drizzle_orm_1.eq)(schema_1.columns.id, id));
+        });
+        const [resultColumn] = await this.db
+            .select()
+            .from(schema_1.columns)
+            .where((0, drizzle_orm_1.eq)(schema_1.columns.id, id));
+        return resultColumn;
     }
     async remove(id, authorId) {
-        await this.findOne(id, authorId);
-        const [deletedColumn] = await this.db
-            .delete(schema_1.columns)
-            .where((0, drizzle_orm_1.eq)(schema_1.columns.id, id))
-            .returning();
-        return deletedColumn;
+        const columnToDelete = await this.findOne(id, authorId);
+        await this.db.transaction(async (tx) => {
+            const [deletedColumn] = await tx
+                .delete(schema_1.columns)
+                .where((0, drizzle_orm_1.eq)(schema_1.columns.id, id))
+                .returning();
+            if (!deletedColumn) {
+                throw new common_1.NotFoundException(`Coluna com ID ${id} não encontrada.`);
+            }
+            await tx
+                .update(schema_1.columns)
+                .set({ order: (0, drizzle_orm_1.sql) `${schema_1.columns.order} - 1` })
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.columns.authorId, authorId), (0, drizzle_orm_1.gt)(schema_1.columns.order, columnToDelete.order)));
+        });
+        return;
     }
 };
 exports.ColumnsService = ColumnsService;

@@ -10,7 +10,7 @@ export class UpdateTaskDto {
   @IsOptional()
   description?: string;
 
-  @IsUUID()
+  @IsString()
   @IsOptional()
   columnId?: string;
   

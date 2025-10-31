@@ -82,13 +82,6 @@ let UsersService = class UsersService {
         });
         return newUser;
     }
-    async findAll() {
-        return this.db.query.users.findMany({
-            columns: {
-                password: false,
-            },
-        });
-    }
     async findOne(id) {
         const [user] = await this.db.query.users.findMany({
             where: (0, drizzle_orm_1.eq)(schema_1.users.id, id),
@@ -106,6 +99,48 @@ let UsersService = class UsersService {
             where: (0, drizzle_orm_1.eq)(schema_1.users.email, email),
         });
         return user;
+    }
+    async update(id, updateUserDto) {
+        const [currentUser] = await this.db
+            .select()
+            .from(schema_1.users)
+            .where((0, drizzle_orm_1.eq)(schema_1.users.id, id));
+        if (!currentUser) {
+            throw new common_1.NotFoundException(`Usuário com ID ${id} não encontrado.`);
+        }
+        const dataToUpdate = {};
+        if (updateUserDto.name) {
+            dataToUpdate.name = updateUserDto.name;
+        }
+        if (updateUserDto.email && updateUserDto.email !== currentUser.email) {
+            const [existingUser] = await this.db
+                .select()
+                .from(schema_1.users)
+                .where((0, drizzle_orm_1.eq)(schema_1.users.email, updateUserDto.email));
+            if (existingUser) {
+                throw new common_1.ConflictException('O novo e-mail fornecido já está em uso.');
+            }
+            dataToUpdate.email = updateUserDto.email;
+        }
+        if (updateUserDto.password) {
+            const saltRounds = 10;
+            dataToUpdate.password = await bcrypt.hash(updateUserDto.password, saltRounds);
+        }
+        if (Object.keys(dataToUpdate).length === 0) {
+            return this.findOne(id);
+        }
+        const [updatedUser] = await this.db
+            .update(schema_1.users)
+            .set(dataToUpdate)
+            .where((0, drizzle_orm_1.eq)(schema_1.users.id, id))
+            .returning({
+            id: schema_1.users.id,
+            name: schema_1.users.name,
+            email: schema_1.users.email,
+            avatarUrl: schema_1.users.avatarUrl,
+            createdAt: schema_1.users.createdAt,
+        });
+        return updatedUser;
     }
 };
 exports.UsersService = UsersService;

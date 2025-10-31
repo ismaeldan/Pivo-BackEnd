@@ -12,24 +12,24 @@ export declare class TasksService {
         order?: number;
         status?: TaskStatus;
     }): Promise<{
-        id: string;
-        createdAt: Date | null;
         title: string;
-        order: number;
-        authorId: string;
         description: string | null;
         columnId: string;
+        order: number;
         status: "pending" | "in_progress" | "completed";
+        id: string;
+        createdAt: Date | null;
+        authorId: string;
     }>;
     findAll(authorId: string, status?: TaskStatus): Promise<{
-        id: string;
-        createdAt: Date | null;
         title: string;
-        order: number;
-        authorId: string;
         description: string | null;
         columnId: string;
+        order: number;
         status: "pending" | "in_progress" | "completed";
+        id: string;
+        createdAt: Date | null;
+        authorId: string;
     }[]>;
     search(query: string, authorId: string): Promise<{
         id: string;
@@ -42,14 +42,14 @@ export declare class TasksService {
         status: "pending" | "in_progress" | "completed";
     }[]>;
     findOne(id: string, authorId: string): Promise<{
-        id: string;
-        createdAt: Date | null;
         title: string;
-        order: number;
-        authorId: string;
         description: string | null;
         columnId: string;
+        order: number;
         status: "pending" | "in_progress" | "completed";
+        id: string;
+        createdAt: Date | null;
+        authorId: string;
     }>;
     update(id: string, updateTaskDto: UpdateTaskDto, authorId: string): Promise<{
         id: string;
