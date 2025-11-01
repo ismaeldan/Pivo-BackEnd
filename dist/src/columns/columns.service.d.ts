@@ -1,5 +1,6 @@
 import { UpdateColumnDto } from './dto/update-column.dto';
 import type { DbType } from 'src/db/db.module';
+import { TaskStatus } from 'src/db/schema';
 export declare class ColumnsService {
     private db;
     constructor(db: DbType);
@@ -14,12 +15,22 @@ export declare class ColumnsService {
         order: number;
         authorId: string;
     }>;
-    findAll(authorId: string): Promise<{
+    findAll(authorId: string, status?: TaskStatus, searchQuery?: string): Promise<{
         id: string;
+        createdAt: Date | null;
         title: string;
         order: number;
-        createdAt: Date | null;
         authorId: string;
+        tasks: {
+            id: string;
+            createdAt: Date | null;
+            title: string;
+            order: number;
+            authorId: string;
+            description: string | null;
+            columnId: string;
+            status: "pending" | "in_progress" | "completed";
+        }[];
     }[]>;
     findOne(id: string, authorId: string): Promise<{
         id: string;

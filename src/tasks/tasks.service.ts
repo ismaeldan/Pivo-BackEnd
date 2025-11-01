@@ -14,8 +14,8 @@ export class TasksService {
     description?: string;
     authorId: string;
     columnId: string;
-    order?: number; //
-    status?: TaskStatus; //
+    order?: number;
+    status?: TaskStatus;
   }) {
     let newOrder: number;
     
@@ -189,7 +189,7 @@ export class TasksService {
       const [deletedTask] = await tx
         .delete(tasks)
         .where(eq(tasks.id, id))
-        .returning(); //
+        .returning();
 
       if (!deletedTask) {
         throw new NotFoundException(`Task com ID ${id} não encontrada.`);
@@ -207,6 +207,6 @@ export class TasksService {
         );
     });
 
-    return; //
+    return;
   }
 }

@@ -2,8 +2,22 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateColumnDto } from './dto/update-column.dto';
 import { DB } from 'src/db/db.module';
 import type { DbType } from 'src/db/db.module';
-import { columns } from 'src/db/schema';
-import { asc, eq, and, max, sql, gt, gte, desc, lte, lt } from 'drizzle-orm'; 
+import { columns, tasks, TaskStatus } from 'src/db/schema'; 
+import {
+  asc,
+  eq,
+  and,
+  max,
+  sql,
+  gt,
+  gte,
+  desc,
+  lt, 
+  lte,
+  not,
+  ilike,
+  or,
+} from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 
 @Injectable()
@@ -12,11 +26,10 @@ export class ColumnsService {
   
   async create(data: {
     title: string;
-    order?: number; //
+    order?: number;
     authorId: string;
   }) {
     let newOrder: number;
-    
     if (data.order === undefined) {
       const [maxOrderResult] = await this.db
         .select({ value: max(columns.order) })
@@ -35,7 +48,6 @@ export class ColumnsService {
           ),
         );
     }
-    
     const [newColumn] = await this.db
       .insert(columns)
       .values({
@@ -45,16 +57,35 @@ export class ColumnsService {
         authorId: data.authorId,
       })
       .returning();
-
     return newColumn;
   }
   
-  async findAll(authorId: string) {
-    const allColumns = await this.db
-      .select()
-      .from(columns)
-      .where(eq(columns.authorId, authorId))
-      .orderBy(asc(columns.order)); //
+  async findAll(
+    authorId: string,
+    status?: TaskStatus,
+    searchQuery?: string,
+  ) {
+    const taskConditions = [eq(tasks.authorId, authorId)];
+    if (status) {
+      taskConditions.push(eq(tasks.status, status));
+    }
+    if (searchQuery) {
+      const searchTerm = `%${searchQuery}%`;
+      taskConditions.push(
+        sql`(${tasks.title} ilike ${searchTerm}) OR (coalesce(${tasks.description}, '') ilike ${searchTerm})`
+      );
+    }
+
+    const allColumns = await this.db.query.columns.findMany({
+      where: eq(columns.authorId, authorId),
+      orderBy: [asc(columns.order)],
+      with: {
+        tasks: {
+          where: and(...taskConditions),
+          orderBy: [asc(tasks.order), asc(tasks.createdAt)],
+        },
+      },
+    });
 
     return allColumns;
   }
@@ -63,30 +94,25 @@ export class ColumnsService {
     const [column] = await this.db
       .select()
       .from(columns)
-      .where(and(eq(columns.id, id), eq(columns.authorId, authorId))); //
-
+      .where(and(eq(columns.id, id), eq(columns.authorId, authorId)));
     if (!column) {
-      throw new NotFoundException(`Coluna com ID ${id} não encontrada.`); //
+      throw new NotFoundException(`Coluna com ID ${id} não encontrada.`);
     }
-
     return column;
   }
   
   async update(id: string, updateColumnDto: UpdateColumnDto, authorId: string) {
-    const columnToMove = await this.findOne(id, authorId); //
-
+    const columnToMove = await this.findOne(id, authorId);
     const newOrder = updateColumnDto.order;
-    
     const isReordering =
       newOrder !== undefined && newOrder !== columnToMove.order;
-      
+
     if (!isReordering) {
       const [updatedColumn] = await this.db
         .update(columns)
         .set(updateColumnDto)
         .where(eq(columns.id, id))
         .returning();
-
       if (!updatedColumn) {
         throw new NotFoundException(
           `Coluna com ID ${id} não encontrada durante atualização.`,
@@ -94,11 +120,9 @@ export class ColumnsService {
       }
       return updatedColumn;
     }
-    
+
     await this.db.transaction(async (tx) => {
-
       const oldOrder = columnToMove.order;
-
       if (newOrder < oldOrder) {
         await tx
           .update(columns)
@@ -122,21 +146,19 @@ export class ColumnsService {
             ),
           );
       }
-      
       await tx
         .update(columns)
         .set(updateColumnDto)
         .where(eq(columns.id, id));
     });
-    
+
     const [resultColumn] = await this.db
       .select()
       .from(columns)
       .where(eq(columns.id, id));
-
     return resultColumn;
   }
-  
+
   async remove(id: string, authorId: string) {
     const columnToDelete = await this.findOne(id, authorId);
     await this.db.transaction(async (tx) => {
@@ -147,7 +169,6 @@ export class ColumnsService {
       if (!deletedColumn) {
         throw new NotFoundException(`Coluna com ID ${id} não encontrada.`);
       }
-      
       await tx
         .update(columns)
         .set({ order: sql`${columns.order} - 1` })
@@ -158,7 +179,6 @@ export class ColumnsService {
           ),
         );
     });
-
     return;
   }
 }

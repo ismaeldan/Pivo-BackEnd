@@ -50,12 +50,25 @@ let ColumnsService = class ColumnsService {
             .returning();
         return newColumn;
     }
-    async findAll(authorId) {
-        const allColumns = await this.db
-            .select()
-            .from(schema_1.columns)
-            .where((0, drizzle_orm_1.eq)(schema_1.columns.authorId, authorId))
-            .orderBy((0, drizzle_orm_1.asc)(schema_1.columns.order));
+    async findAll(authorId, status, searchQuery) {
+        const taskConditions = [(0, drizzle_orm_1.eq)(schema_1.tasks.authorId, authorId)];
+        if (status) {
+            taskConditions.push((0, drizzle_orm_1.eq)(schema_1.tasks.status, status));
+        }
+        if (searchQuery) {
+            const searchTerm = `%${searchQuery}%`;
+            taskConditions.push((0, drizzle_orm_1.sql) `(${schema_1.tasks.title} ilike ${searchTerm}) OR (coalesce(${schema_1.tasks.description}, '') ilike ${searchTerm})`);
+        }
+        const allColumns = await this.db.query.columns.findMany({
+            where: (0, drizzle_orm_1.eq)(schema_1.columns.authorId, authorId),
+            orderBy: [(0, drizzle_orm_1.asc)(schema_1.columns.order)],
+            with: {
+                tasks: {
+                    where: (0, drizzle_orm_1.and)(...taskConditions),
+                    orderBy: [(0, drizzle_orm_1.asc)(schema_1.tasks.order), (0, drizzle_orm_1.asc)(schema_1.tasks.createdAt)],
+                },
+            },
+        });
         return allColumns;
     }
     async findOne(id, authorId) {

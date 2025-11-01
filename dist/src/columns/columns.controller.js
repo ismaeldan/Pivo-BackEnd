@@ -18,6 +18,22 @@ const columns_service_1 = require("./columns.service");
 const create_column_dto_1 = require("./dto/create-column.dto");
 const update_column_dto_1 = require("./dto/update-column.dto");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const class_validator_1 = require("class-validator");
+const schema_1 = require("../db/schema");
+class FindAllTasksDto {
+    status;
+    q;
+}
+__decorate([
+    (0, class_validator_1.IsEnum)(schema_1.TaskStatus),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], FindAllTasksDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], FindAllTasksDto.prototype, "q", void 0);
 let ColumnsController = class ColumnsController {
     columnsService;
     constructor(columnsService) {
@@ -25,15 +41,12 @@ let ColumnsController = class ColumnsController {
     }
     create(createColumnDto, req) {
         const userId = req.user.userId;
-        const columnDataComAutor = {
-            ...createColumnDto,
-            authorId: userId,
-        };
+        const columnDataComAutor = { ...createColumnDto, authorId: userId };
         return this.columnsService.create(columnDataComAutor);
     }
-    findAll(req) {
+    findAll(req, queryParams) {
         const userId = req.user.userId;
-        return this.columnsService.findAll(userId);
+        return this.columnsService.findAll(userId, queryParams.status, queryParams.q);
     }
     findOne(id, req) {
         const userId = req.user.userId;
@@ -61,8 +74,9 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, FindAllTasksDto]),
     __metadata("design:returntype", void 0)
 ], ColumnsController.prototype, "findAll", null);
 __decorate([
