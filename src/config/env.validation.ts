@@ -6,9 +6,5 @@ export const envSchema = z.object({
   JWT_SECRET: z.string().min(1),
   JWT_EXPIRATION: z.coerce.number().min(1),
 
-  DATABASE_HOST: z.string().default('localhost'),
-  DATABASE_PORT: z.coerce.number().default(5432),
-  DATABASE_USER: z.string().min(1),
-  DATABASE_PASSWORD: z.string().min(1),
-  DATABASE_NAME: z.string().min(1),
+  DATABASE_URL: z.string().url().min(1),
 });
