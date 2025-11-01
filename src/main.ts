@@ -1,25 +1,22 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: [
+      'https://pivo-front-end.vercel.app',
+      'http://localhost:3000'
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
+    allowedHeaders: 'Content-Type, Accept, Authorization',
   });
   
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
-
-  await app.listen(3100);
-  console.log(`Backend rodando em: ${await app.getUrl()}`);
+  const configService = app.get(ConfigService);
+  const port = configService.get<number>('PORT'); //
+  
+  await app.listen(port || 3100);
 }
 bootstrap();
